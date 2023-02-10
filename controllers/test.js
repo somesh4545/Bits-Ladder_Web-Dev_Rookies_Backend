@@ -1,12 +1,14 @@
 // const Task = require("../models/task");
 
-const getTest = async (req, res) => {
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+
+const getTest = catchAsyncErrors(async (req, res) => {
   try {
     res.status(200).json({ data: "backend running" });
   } catch (error) {
     res.status(500).json({ error });
   }
-};
+})
 
 // const getTask = async (req, res) => {
 //   try {
