@@ -17,7 +17,7 @@ const addCategory = catchAsyncErrors(async (req, res) => {
 const deleteCategory = catchAsyncErrors(async (req, res) => {
   const category = req.body;
   const deleteCategory = await Categories.deleteOne({ _id: category._id });
-  console.log(deleteCategory);
+  // console.log(deleteCategory);
   if (deleteCategory.deletedCount > 0) {
     res
       .status(200)

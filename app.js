@@ -1,7 +1,12 @@
 const express = require("express");
 const app = express();
+
+const errorMiddleware = require("./middlewares/error");
+
 const test = require("./routes/test");
 const categories = require("./routes/categories");
+const workers = require("./routes/workers");
+
 const connectToDB = require("./db/connect");
 require("dotenv").config();
 
@@ -13,6 +18,9 @@ app.use("/api/v1/test", test);
 
 // categories route
 app.use("/api/v1/categories", categories);
+
+// workers route
+app.use("/api/v1/workers", workers);
 
 const start = async () => {
   try {
@@ -26,3 +34,4 @@ const start = async () => {
 };
 
 start();
+app.use(errorMiddleware);

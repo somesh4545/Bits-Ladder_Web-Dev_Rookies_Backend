@@ -9,6 +9,10 @@ const experience = mongoose.Schema({
     type: String,
     trim: true,
   },
+  date: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const WorkersSchema = mongoose.Schema({
@@ -24,6 +28,12 @@ const WorkersSchema = mongoose.Schema({
     maxlength: [10, "Max length can be 10"],
     minlength: [10, "Min length can be 10"],
     trim: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: [true, "Password is required"],
+    trim: true,
   },
   phone_verified: {
     type: Boolean,
@@ -35,6 +45,7 @@ const WorkersSchema = mongoose.Schema({
     maxlength: [12, "Max length can be 10"],
     minlength: [12, "Min length can be 10"],
     trim: true,
+    unique: true,
   },
   aadhar_card_url: {
     type: String,
@@ -54,11 +65,11 @@ const WorkersSchema = mongoose.Schema({
     default: [],
   },
   rating: {
-    total: {
+    count: {
       type: Number,
       default: 0,
     },
-    count: {
+    total: {
       type: Number,
       default: 0,
     },
@@ -81,8 +92,8 @@ const WorkersSchema = mongoose.Schema({
       default: null,
     },
     date: {
+      type: Date,
       default: Date.now(),
-      default: null,
     },
   },
   createdAt: {
