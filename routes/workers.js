@@ -5,6 +5,7 @@ const {
   removeWorkerExperience,
 } = require("../controllers/worker/experience");
 const { updateWorkerRating } = require("../controllers/worker/rating");
+const { updateWorkerSkills } = require("../controllers/worker/skills");
 const {
   workerRegistration,
   workerLogin,
@@ -33,5 +34,8 @@ router
 
 // route for updating rating of worker
 router.route("/:id/rating").patch(updateWorkerRating);
+
+// route for adding deleting skills of the worker with single api
+router.route("/:id/skills").patch(updateWorkerSkills);
 
 module.exports = router;

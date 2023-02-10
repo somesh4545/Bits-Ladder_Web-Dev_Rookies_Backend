@@ -74,6 +74,10 @@ const WorkersSchema = mongoose.Schema({
       default: 0,
     },
   },
+  skills: {
+    type: [String],
+    default: [],
+  },
   plan: {
     plan_type: {
       type: String,
