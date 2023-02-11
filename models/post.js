@@ -1,5 +1,32 @@
 const mongoose = require("mongoose");
 
+const responseSchema = mongoose.Schema({
+  worker: {
+    type: mongoose.Schema.ObjectId,
+    ref: "workers",
+    required: true,
+    unique: true,
+  },
+  quotation_amnt: {
+    type: Number,
+    requred: true,
+  },
+  selected: {
+    type: String, //should be enum selected rejected noActiontaken
+    enum: ["Accepted", "Rejected", "No response"],
+    default: "No response",
+  },
+  additional_msg: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  time: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const PostSchema = mongoose.Schema({
   title: {
     type: String,
@@ -8,19 +35,19 @@ const PostSchema = mongoose.Schema({
     trim: true,
   },
   location: {
-    type:Object,
+    type: Object,
     required: [true, "Location required"],
-    place: { 
-      type: String, 
-      required: [true, "Place required"]
+    place: {
+      type: String,
+      required: [true, "Place required"],
     },
-    lat: { 
-      type: Number, 
-      required: [true, "Latitude required"]
+    lat: {
+      type: Number,
+      required: [true, "Latitude required"],
     },
-    lang: { 
-      type: Number, 
-      required: [true, "Longitude required"]
+    lang: {
+      type: Number,
+      required: [true, "Longitude required"],
     },
   },
   description: {
@@ -48,28 +75,7 @@ const PostSchema = mongoose.Schema({
     default: true,
   },
   responses: {
-    type: [
-      {
-        worker: {
-          type: mongoose.Schema.ObjectId,
-          ref: "workers",
-          required: true,
-        },
-        quotation_amnt: {
-          type: Number,
-          requred: true,
-        },
-        selected: {
-          type: Boolean,//should be enum selected rejected noActiontaken
-          default: false,
-        },
-        additional_msg: {
-          type: String,
-          required: false,
-          default: null,
-        },
-      },
-    ],
+    type: [responseSchema],
     default: [],
   },
   winner: {

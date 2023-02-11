@@ -1,14 +1,28 @@
-const express = require('express');
-const { registerClient, loginClient, createPost, updatePost, getAllPosts, getClientPost } = require('../controllers/clientController');
-const router = express.Router()
+const express = require("express");
+const {
+  registerClient,
+  loginClient,
+  createPost,
+  getAllPosts,
+  getAllClientPosts,
+  getPostByID,
+  addResponse,
+  updateResponse,
+} = require("../controllers/clientController");
+const router = express.Router();
 
 router.route("/new").post(registerClient);
-router.route("/login").post(loginClient)
 
+router.route("/login").post(loginClient);
 
+// issue post routes
+router.route("/post").get(getAllPosts).post(createPost);
+router.route("/post/:id").get(getPostByID);
 
-//issue post routes
-router.route("/post").get(getAllPosts).post(createPost)
-router.route("/post/:id").patch(updatePost).get(getClientPost)
+// route for getting all the posts by particular client
+router.route("/:id/posts").get(getAllClientPosts);
 
-module.exports = router
+router.route("/post/:id/response").post(addResponse);
+router.route("/post/:id/response/:responseID").patch(updateResponse);
+
+module.exports = router;
