@@ -10,6 +10,7 @@ const workers = require("./routes/workers");
 const client = require("./routes/client");
 const posts = require("./routes/posts");
 const notification = require("./routes/notification");
+const chats = require("./routes/chats");
 const admin = require("./routes/admin");
 
 const connectToDB = require("./db/connect");
@@ -36,6 +37,9 @@ app.use("/api/v1/posts", posts);
 
 // notification route
 app.use("/api/v1/notification", notification);
+
+// router for chats
+app.use("/api/v1/chats", chats);
 
 // admin route
 app.use("/api/v1/admin", admin);
