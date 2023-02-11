@@ -6,9 +6,9 @@ const errorMiddleware = require("./middlewares/error");
 const test = require("./routes/test");
 const categories = require("./routes/categories");
 const workers = require("./routes/workers");
-const client = require("./routes/client")
-const posts = require("./routes/posts")
-const admin = require("./routes/admin")
+const client = require("./routes/client");
+const posts = require("./routes/posts");
+const admin = require("./routes/admin");
 
 const connectToDB = require("./db/connect");
 require("dotenv").config();
@@ -26,19 +26,21 @@ app.use("/api/v1/categories", categories);
 app.use("/api/v1/workers", workers);
 
 // client route
-app.use("/api/v1/client", client)
+app.use("/api/v1/client", client);
 
 // all post route
-app.use('/api/v1/posts', posts)
+app.use("/api/v1/posts", posts);
 
 // admin route
-app.use('/api/v1/admin', admin)
+app.use("/api/v1/admin", admin);
+
+const port_no = process.env.PORT || 5000;
 
 const start = async () => {
   try {
     await connectToDB(process.env.MONGO_URI);
-    app.listen(5000, () => {
-      console.log("listening on port " + 5000);
+    app.listen(port_no, () => {
+      console.log(`listening on port ${port_no}`);
     });
   } catch (error) {
     console.log(error);
