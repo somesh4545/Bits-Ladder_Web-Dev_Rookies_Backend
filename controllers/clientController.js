@@ -18,7 +18,10 @@ const registerClient = catchAsyncErrors(async (req, res, next) => {
     phone,
     password,
   });
-  res.status(201).json({ message: "user created successfully" });
+  if (!client) {
+    res.status(400).json({ success: false, message: "User not created" });
+  }
+  res.status(201).json({ success: true, message: "user created successfully" });
 });
 
 const loginClient = catchAsyncErrors(async (req, res, next) => {
@@ -46,17 +49,8 @@ const loginClient = catchAsyncErrors(async (req, res, next) => {
 });
 
 const createPost = catchAsyncErrors(async (req, res, next) => {
-  const { title, description, estimated_budget, owner, location } = req.body;
-  if (!location) {
-    return next(new ErrorHandler("Location property is required", 400));
-  }
-  const post = await Post.create({
-    title,
-    description,
-    estimated_budget,
-    owner,
-    location,
-  });
+  console.log(req.body);
+  const post = await Post.create(req.body);
   if (!post) {
     return next(new ErrorHandler("Error while creating post", 500));
   }

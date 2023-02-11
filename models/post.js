@@ -4,12 +4,10 @@ const responseSchema = mongoose.Schema({
   worker: {
     type: mongoose.Schema.ObjectId,
     ref: "workers",
-    required: true,
     unique: true,
   },
   quotation_amnt: {
     type: Number,
-    requred: true,
   },
   selected: {
     type: String, //should be enum selected rejected noActiontaken
@@ -34,20 +32,15 @@ const PostSchema = mongoose.Schema({
     maxlength: [20, "Max length can be 20 characters"],
     trim: true,
   },
+  place: { type: String, required: [true, "Place required"] },
   location: {
-    type: Object,
-    required: [true, "Location required"],
-    place: {
+    type: {
       type: String,
-      required: [true, "Place required"],
+      default: "Point",
     },
-    lat: {
-      type: Number,
-      required: [true, "Latitude required"],
-    },
-    lang: {
-      type: Number,
-      required: [true, "Longitude required"],
+    coordinates: {
+      type: [Number],
+      required: [true, "Location coordinates are required"],
     },
   },
   description: {
@@ -56,8 +49,12 @@ const PostSchema = mongoose.Schema({
     maxlength: [50, "Max length can be 50 characters"],
     trim: true,
   },
-  estimated_budget: {
-    type: String,
+  minBudget: {
+    type: Number,
+    required: true,
+  },
+  maxBudget: {
+    type: Number,
     required: true,
   },
   owner: {
@@ -94,5 +91,7 @@ const PostSchema = mongoose.Schema({
     default: Date.now,
   },
 });
+
+PostSchema.index({ location: "2dsphere" });
 
 module.exports = mongoose.model("Post", PostSchema);

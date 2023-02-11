@@ -4,6 +4,9 @@ const {
   addWorkerExperience,
   removeWorkerExperience,
 } = require("../controllers/worker/experience");
+const {
+  workerPostRecommendations,
+} = require("../controllers/worker/postRecommendations");
 const { updateWorkerRating } = require("../controllers/worker/rating");
 const { updateWorkerSkills } = require("../controllers/worker/skills");
 const {
@@ -24,6 +27,9 @@ router.route("/login").post(workerLogin);
 // route to get worker by id
 // route to update certain details of the worker
 router.route("/:id").get(getWorkerByID).patch(updateWorker);
+
+// route for post(problems) recommendations
+router.route("/:id/recommendations").get(workerPostRecommendations);
 
 // route for adding getting and removing work experiences
 router
