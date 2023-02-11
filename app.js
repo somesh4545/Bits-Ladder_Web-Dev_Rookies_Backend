@@ -8,6 +8,7 @@ const categories = require("./routes/categories");
 const workers = require("./routes/workers");
 const client = require("./routes/client")
 const posts = require("./routes/posts")
+const admin = require("./routes/admin")
 
 const connectToDB = require("./db/connect");
 require("dotenv").config();
@@ -29,6 +30,9 @@ app.use("/api/v1/client", client)
 
 // all post route
 app.use('/api/v1/posts', posts)
+
+// admin route
+app.use('/api/v1/admin', admin)
 
 const start = async () => {
   try {
