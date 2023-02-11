@@ -31,7 +31,11 @@ const getWorkerExperiences = catchAsyncErrors(async (req, res) => {
   if (!experiences) {
     res.status(404).json({ success: false, message: "Worker ID invalid" });
   }
-  res.status(200).json({ data: experiences });
+  res.status(200).json({
+    success: true,
+    count: experiences.experiences.length,
+    data: experiences.experiences,
+  });
 });
 
 const removeWorkerExperience = catchAsyncErrors(async (req, res) => {

@@ -4,6 +4,7 @@ const Client = require("../models/client");
 const Post = require("../models/post");
 const Pairing = require("../models/pairing");
 const { default: mongoose } = require("mongoose");
+const { sendNotification } = require("../utils/utils");
 
 const registerClient = catchAsyncErrors(async (req, res, next) => {
   //client will register with only name, password and verified phone number
@@ -137,6 +138,13 @@ const updateResponse = catchAsyncErrors(async (req, res, next) => {
         worker: workerID,
         post: postID,
       });
+      await sendNotification(
+        "Congrats your bid has been accepted",
+        "Contact the owner for more details",
+        "Worker",
+        workerID,
+        true
+      );
       res.status(200).json({ success: true, message: "Winner has been added" });
     }
   } else if (isOpen == true && responseStatus == "Rejected") {
@@ -162,6 +170,14 @@ const updateResponse = catchAsyncErrors(async (req, res, next) => {
     if (!post) {
       res.status(401).json({ success: false, message: "Invalid parameters" });
     } else {
+      await sendNotification(
+        "Your bid has been rejected",
+        "Don't worry there are many other works",
+        "Worker",
+        workerID,
+        true
+      );
+
       res.status(200).json({ success: true, message: "Updated the post" });
     }
   } else {
@@ -188,6 +204,13 @@ const addResponse = catchAsyncErrors(async (req, res, next) => {
       message: "Please try again after some time",
     });
   }
+  await sendNotification(
+    "New bid",
+    `A new bid has been received in #${updatedPost._id} post`,
+    "Client",
+    updatedPost.owner,
+    false
+  );
   res.status(200).json({
     success: true,
     message: "Response added to the post successfully",
@@ -204,7 +227,3 @@ module.exports = {
   updateResponse,
   addResponse,
 };
-
-// isOpen false -> winner field will be filled -> pairing schema will create object
-
-// responses

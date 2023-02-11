@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const errorMiddleware = require("./middlewares/error");
 
@@ -8,6 +9,7 @@ const categories = require("./routes/categories");
 const workers = require("./routes/workers");
 const client = require("./routes/client");
 const posts = require("./routes/posts");
+const notification = require("./routes/notification");
 const admin = require("./routes/admin");
 
 const connectToDB = require("./db/connect");
@@ -15,6 +17,7 @@ require("dotenv").config();
 
 // middleware
 app.use(express.json());
+app.use(cors());
 
 // routes
 app.use("/api/v1/test", test);
@@ -30,6 +33,9 @@ app.use("/api/v1/client", client);
 
 // all post route
 app.use("/api/v1/posts", posts);
+
+// notification route
+app.use("/api/v1/notification", notification);
 
 // admin route
 app.use("/api/v1/admin", admin);

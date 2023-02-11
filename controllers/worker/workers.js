@@ -14,9 +14,11 @@ const workerRegistration = catchAsyncErrors(async (req, res) => {
   };
   const newWorker = await Workers.create(data);
 
-  res
-    .status(200)
-    .json({ success: true, message: "Worker created successfully" });
+  res.status(200).json({
+    success: true,
+    data: newWorker,
+    message: "Worker created successfully",
+  });
 });
 
 const workerLogin = catchAsyncErrors(async (req, res) => {
@@ -33,7 +35,9 @@ const workerLogin = catchAsyncErrors(async (req, res) => {
     });
   }
 
-  res.status(200).json({ success: true, message: "Login successful" });
+  res
+    .status(200)
+    .json({ success: true, data: newWorker, message: "Login successful" });
 });
 
 const updateWorker = catchAsyncErrors(async (req, res) => {
@@ -53,7 +57,11 @@ const updateWorker = catchAsyncErrors(async (req, res) => {
   }
   res
     .status(200)
-    .json({ success: true, message: "Worker updated successfully" });
+    .json({
+      success: true,
+      data: updatedWorker,
+      message: "Worker updated successfully",
+    });
 });
 
 const getWorkerByID = catchAsyncErrors(async (req, res) => {

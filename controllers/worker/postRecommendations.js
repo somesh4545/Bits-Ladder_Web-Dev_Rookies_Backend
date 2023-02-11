@@ -48,7 +48,7 @@ const workerPostRecommendations = catchAsyncErrors(async (req, res) => {
     let result;
 
     if (location) {
-      const cord = location.split(",");
+      let cord = location.split(",");
 
       let skillsObjectIdArray = skillsArr.map(
         (s) => new mongoose.Types.ObjectId(s)
@@ -58,12 +58,14 @@ const workerPostRecommendations = catchAsyncErrors(async (req, res) => {
       const limit = Number(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
+      cord = cord.map((s) => parseFloat(s));
+
       result = Posts.aggregate([
         {
           $geoNear: {
             near: {
               type: "Point",
-              coordinates: [73.850533, 18.46162],
+              coordinates: cord,
             },
             key: "location",
             maxDistance: radius != null ? radius * 1069 : 10 * 1069,
@@ -73,6 +75,7 @@ const workerPostRecommendations = catchAsyncErrors(async (req, res) => {
               category: {
                 $in: skillsObjectIdArray,
               },
+              isOpen: true,
             },
           },
         },
@@ -84,6 +87,8 @@ const workerPostRecommendations = catchAsyncErrors(async (req, res) => {
 
       res.status(200).json({ data: posts, count: posts.length });
     } else {
+      queryObject.isOpen = true;
+
       result = Posts.find(queryObject);
       // sorting features
       if (sort) {
