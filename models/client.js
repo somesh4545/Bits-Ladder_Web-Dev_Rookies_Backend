@@ -10,22 +10,23 @@ const ClientSchema = mongoose.Schema({
   },
   phone: {
     type: String,
-    required: true,
+    required: [true, "Phone number is required"],
+    maxlength: [10, "Max length can be 10"],
+    minlength: [10, "Min length can be 10"],
     trim: true,
     unique: true,
   },
   phone_verified: {
     type: Boolean,
-    default: false,
-    required: false
+    default: true,
   },
   email: {
     type: String,
     required: false,
     validate: [validator.isEmail, "Please Enter a valid Email"],
-    index:true, 
-    unique:true,
-    sparse:true
+    index: true,
+    unique: true,
+    sparse: true,
   },
   password: {
     type: String,
@@ -37,11 +38,11 @@ const ClientSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  isBlackListed:{
+  isBlackListed: {
     type: Boolean,
     default: false,
-    required: false
-  }
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("Client", ClientSchema);

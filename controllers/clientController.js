@@ -21,31 +21,30 @@ const registerClient = catchAsyncErrors(async (req, res, next) => {
   if (!client) {
     res.status(400).json({ success: false, message: "User not created" });
   }
-  res.status(201).json({ success: true, message: "user created successfully" });
+  res.status(201).json({
+    success: true,
+    data: client,
+    message: "user created successfully",
+  });
 });
 
 const loginClient = catchAsyncErrors(async (req, res, next) => {
-  const { name, password } = req.body;
-
-  // checking if user has given password and email both
-
-  if (!name || !password) {
-    return next(new ErrorHandler("Please Enter name & Password", 400));
+  const body = req.body;
+  const data = {
+    phone: body.phone_no,
+    password: body.password,
+  };
+  const loggedClient = await Client.findOne(data);
+  if (!loggedClient) {
+    res.status(400).json({
+      success: false,
+      message: "Entered phone number or password is incorrect",
+    });
   }
 
-  const client = await Client.findOne({ name }).select("+password");
-
-  if (!client) {
-    return next(new ErrorHandler("Invalid name or password", 401));
-  }
-
-  const pswd = await client.password;
-
-  if (pswd !== password) {
-    return next(new ErrorHandler("Invalid email or password", 401));
-  }
-
-  res.status(200).json({ message: "client logged in succefully" });
+  res
+    .status(200)
+    .json({ success: true, data: loggedClient, message: "Login successful" });
 });
 
 const createPost = catchAsyncErrors(async (req, res, next) => {
@@ -54,11 +53,18 @@ const createPost = catchAsyncErrors(async (req, res, next) => {
   if (!post) {
     return next(new ErrorHandler("Error while creating post", 500));
   }
-  res.status(201).json({ success: true, message: "Post created succesfully" });
+  res.status(201).json({
+    success: true,
+    data: { postID: post._id },
+    message: "Post created succesfully",
+  });
 });
 
 const getAllPosts = catchAsyncErrors(async (req, res, next) => {
-  const posts = await Post.find({});
+  const posts = await Post.find({})
+    .populate("category winner.worker")
+    .populate("responses.worker", "_id name rating")
+    .populate("owner", "_id name");
   res
     .status(200)
     .json({ success: true, data: JSON.stringify(posts), count: posts.length });
@@ -67,7 +73,9 @@ const getAllPosts = catchAsyncErrors(async (req, res, next) => {
 const getAllClientPosts = catchAsyncErrors(async (req, res, next) => {
   const { id: owner_id } = req.params;
   const own_id = mongoose.Types.ObjectId(owner_id.trim());
-  const post = await Post.find({ owner: own_id });
+  const post = await Post.find({ owner: own_id })
+    .populate("category winner.worker")
+    .populate("responses.worker", "_id name rating");
   if (!post) {
     return next(new ErrorHandler("Post with given client ID not found", 404));
   }
@@ -78,7 +86,10 @@ const getAllClientPosts = catchAsyncErrors(async (req, res, next) => {
 
 const getPostByID = catchAsyncErrors(async (req, res, next) => {
   const { id: postID } = req.params;
-  const post = await Post.findOne({ _id: postID });
+  const post = await Post.findOne({ _id: postID })
+    .populate("category winner.worker")
+    .populate("responses.worker", "_id name rating")
+    .populate("owner", "_id name");
   if (!post) {
     return next(new ErrorHandler("Post with given ID not found", 404));
   }
@@ -101,7 +112,9 @@ const updateResponse = catchAsyncErrors(async (req, res, next) => {
     const post = await Post.findOneAndUpdate(
       {
         _id: postID,
+        owner: ownerID,
         "responses._id": responseID,
+        "responses.worker": workerID,
       },
       {
         $set: {
@@ -116,21 +129,23 @@ const updateResponse = catchAsyncErrors(async (req, res, next) => {
       }
     );
 
-    await Pairing.create({
-      owner: ownerID,
-      worker: workerID,
-      post: postID,
-    });
     if (!post) {
-      return next(ErrorHandler("Invalid id for post", 400));
+      res.status(401).json({ success: false, message: "Invalid parameters" });
+    } else {
+      await Pairing.create({
+        owner: ownerID,
+        worker: workerID,
+        post: postID,
+      });
+      res.status(200).json({ success: true, message: "Winner has been added" });
     }
-
-    res.status(200).json({ success: true, message: "Winner has been added" });
   } else if (isOpen == true && responseStatus == "Rejected") {
     const post = await Post.findOneAndUpdate(
       {
         _id: postID,
+        owner: ownerID,
         "responses._id": responseID,
+        "responses.worker": workerID,
       },
       {
         $set: {
@@ -145,10 +160,10 @@ const updateResponse = catchAsyncErrors(async (req, res, next) => {
     );
 
     if (!post) {
-      return next(ErrorHandler("Invalid id for post", 400));
+      res.status(401).json({ success: false, message: "Invalid parameters" });
+    } else {
+      res.status(200).json({ success: true, message: "Updated the post" });
     }
-
-    res.status(200).json({ success: true, message: "Updated the post" });
   } else {
     res.status(400).json({ success: false, message: "Invalid parameters" });
   }
