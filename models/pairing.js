@@ -22,4 +22,4 @@ const PairingSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Client", PairingSchema);
+module.exports = mongoose.model("Pairing", PairingSchema);

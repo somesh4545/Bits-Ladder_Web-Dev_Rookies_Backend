@@ -7,6 +7,7 @@ const test = require("./routes/test");
 const categories = require("./routes/categories");
 const workers = require("./routes/workers");
 const client = require("./routes/client")
+const posts = require("./routes/posts")
 
 const connectToDB = require("./db/connect");
 require("dotenv").config();
@@ -25,6 +26,9 @@ app.use("/api/v1/workers", workers);
 
 // client route
 app.use("/api/v1/client", client)
+
+// all post route
+app.use('/api/v1/posts', posts)
 
 const start = async () => {
   try {

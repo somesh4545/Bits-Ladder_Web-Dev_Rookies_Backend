@@ -8,9 +8,20 @@ const PostSchema = mongoose.Schema({
     trim: true,
   },
   location: {
-    place: { type: String, required: true, default: null },
-    lat: {type: Number, required: true, default: null},
-    lang: {type: Number, required: true, default: null}
+    type:Object,
+    required: [true, "Location required"],
+    place: { 
+      type: String, 
+      required: [true, "Place required"]
+    },
+    lat: { 
+      type: Number, 
+      required: [true, "Latitude required"]
+    },
+    lang: { 
+      type: Number, 
+      required: [true, "Longitude required"]
+    },
   },
   description: {
     type: String,
@@ -49,7 +60,7 @@ const PostSchema = mongoose.Schema({
           requred: true,
         },
         selected: {
-          type: Boolean,
+          type: Boolean,//should be enum selected rejected noActiontaken
           default: false,
         },
         additional_msg: {
