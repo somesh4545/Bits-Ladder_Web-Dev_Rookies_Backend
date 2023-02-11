@@ -7,7 +7,7 @@ const Workers = require("../models/workers");
 const workers = require("../models/workers");
 
 const getAllWorkers = catchAsyncErrors(async (req, res, next) => {
-  const { verified, blacklist } = req.query;
+  const { verified, blacklist, limit } = req.query;
   var queryObject = {};
   if (verified) {
     queryObject.verified = verified;
@@ -16,7 +16,9 @@ const getAllWorkers = catchAsyncErrors(async (req, res, next) => {
     queryObject.blacklist = blacklist;
   }
 
-  const workers = await Workers.find(queryObject);
+  const workers = await Workers.find(queryObject).limit(
+    limit != null ? limit : 20
+  );
 
   if (!workers) {
     return next(new ErrorHandler("Error while fetching workers", 400));
