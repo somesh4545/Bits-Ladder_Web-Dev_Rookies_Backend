@@ -7,19 +7,35 @@ const Workers = require("../models/workers");
 const workers = require("../models/workers");
 
 const getAllWorkers = catchAsyncErrors(async (req, res, next) => {
-  const workers = await Workers.find();
+  const { verified, blacklist } = req.query;
+  var queryObject = {};
+  if (verified) {
+    queryObject.verified = verified;
+  }
+  if (blacklist) {
+    queryObject.blacklist = blacklist;
+  }
+
+  const workers = await Workers.find(queryObject);
+
   if (!workers) {
     return next(new ErrorHandler("Error while fetching workers", 400));
   }
-  res.status(200).json({ success: true, data: workers });
+  res.status(200).json({ success: true, count: workers.length, data: workers });
 });
 
 const getAllClients = catchAsyncErrors(async (req, res, next) => {
-  const clients = await Client.find();
+  const { isBlackListed } = req.query;
+  var queryObject = {};
+  if (isBlackListed) {
+    queryObject.isBlackListed = isBlackListed;
+  }
+
+  const clients = await Client.find(queryObject);
   if (!clients) {
     return next(new ErrorHandler("Error while fetching clients", 400));
   }
-  res.status(200).json({ success: true, data: clients });
+  res.status(200).json({ success: true, count: clients.length, data: clients });
 });
 
 const getStats = catchAsyncErrors(async (req, res, next) => {
@@ -93,7 +109,7 @@ const blackListWorker = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-const verifyWorker = catchAsyncErrors(async(req, res, next)=>{
+const verifyWorker = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
   const verify = await workers.findOneAndUpdate(
     {
@@ -119,16 +135,20 @@ const verifyWorker = catchAsyncErrors(async(req, res, next)=>{
     success: true,
     data: verify,
   });
-})
+});
 
-const getAllPairs = catchAsyncErrors(async(req, res, next)=>{
+const getAllPairs = catchAsyncErrors(async (req, res, next) => {
   const pairs = await Pairing.find()
+    .populate("worker", "_id name phone_no")
+    .populate("owner", "_id name phone")
+    .populate("post")
+    .sort("createdAt");
 
   res.status(200).json({
-    success:true,
-    data: pairs
-  })
-})
+    success: true,
+    data: pairs,
+  });
+});
 
 module.exports = {
   getAllWorkers,
@@ -137,5 +157,5 @@ module.exports = {
   blackListClient,
   blackListWorker,
   verifyWorker,
-  getAllPairs
+  getAllPairs,
 };
